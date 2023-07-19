@@ -1,0 +1,73 @@
+class Game {
+  field Snake snake; //the Snake playing in the game 
+
+  field Food food; //The circles of the food the snake needs to eat
+
+  // Constructor
+  constructor Game newGameInstance() {
+   
+    //Initializing the snake and the food
+    let snake = Snake.init();
+    let food = Food.init();
+  
+    return this;
+  }
+
+  //Running the Game
+  method void gameplayRun() {
+
+    // As long as the snake is alive, advance the snake
+    do snake.moveSnake();
+    
+    do didSnakeEat(); //check if the snake ate the food
+
+    while (~snake.ifDied()) { //While the snake is alive
+      
+      do snake.renderSnake(); //Creating the Snake
+      do food.renderFood(); //Spawning the Food
+
+      //Creating a Lag for gameplay purposes
+      do Sys.wait(250);
+      do Screen.clearScreen(); //wipe the screen so the movements are clean
+
+      // move the snake forward one
+      do snake.moveSnake();
+
+      do didSnakeEat(); //check if the snake ate the food
+    }
+    
+    // When the snake dies - print end of game message
+    do Output.printString("Oops, You Died! Game over :(");
+    do Output.println();
+
+    do Output.printString("Your Final Score is: ");
+    do Output.printInt(snake.score());
+    
+    return;
+  } 
+
+  // Eat food
+  method void didSnakeEat() {
+    
+    //if the head of the snake hits the block where the food is placed
+    if ((snake.headX() = food.getX()) & (snake.headY() = food.getY())) {
+    
+      do snake.growinSize(); //Make the snake grow in length
+
+      do food.respawnFood(); //Randomly shuffle the location of the food
+    }
+    return;
+  }
+
+  // Terminate objects at the end of the game
+  method void gameTerminate() {
+    do snake.snakeTerminate(); //terminate the snake
+
+    do food.terminateFood(); //terminate the food
+
+    do Memory.deAlloc(this);
+
+    return;
+
+  }
+}

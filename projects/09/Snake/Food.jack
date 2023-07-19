@@ -1,0 +1,75 @@
+class Food {
+  static int side; //side bound for the pixel of the block of food
+  
+  // Coordinates of the Food
+  field int xCoord;
+  field int yCoord;
+ 
+  // Food Constructor
+  constructor Food init() {
+    
+    let side = 16; //setting the bound for the food block
+
+    //Randomly selecting coordinates for the first appearance of the food
+    let xCoord = 3;
+    let yCoord = 4;
+
+    return this;
+  }
+
+  // Get x coordinate of the food
+  method int getX(){
+    return xCoord;
+  }
+
+  // Get y coordinate of the food
+  method int getY() {
+      return yCoord;
+  }
+
+  // After eating the food, randomly selecting a new location for the next food on the screen
+  method void respawnFood() {
+   
+    //Randomly advancing the location of the coordinates
+    let xCoord = xCoord + 3;
+    let yCoord = yCoord + 5;
+
+    //If reached the bound for x
+    if (xCoord > 31) {
+      let xCoord = xCoord - 31; //returning it to bounds
+    }
+
+    //if reached the bound for y
+    if (yCoord > 15){
+      let yCoord = yCoord - 15; //returning it to bounds
+    }
+
+    return;
+
+  }
+
+  // Rendering the Food on the Screen
+  method void renderFood() {
+    
+    //temp variables that signify where to draw the pixels of the food on screen
+    var int drawxCoord;
+    var int drawyCoord;
+
+    //Setting the location of the coordinates to be drawn
+    let drawxCoord = xCoord * side + 8;
+    let drawyCoord = yCoord * side + 8;
+
+    //Drawing the Food as a circle
+    do Screen.drawCircle(drawxCoord, drawyCoord, 6);
+
+    return;
+  }
+
+  // Terminating the food object 
+  method void terminateFood() {
+    
+    do Memory.deAlloc(this);
+
+    return;
+  }
+}

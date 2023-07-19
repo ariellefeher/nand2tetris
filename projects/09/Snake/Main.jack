@@ -1,0 +1,15 @@
+class Main {
+  function void main() {
+    
+    var Game game;
+ 
+    let game = Game.newGameInstance(); //initializing a new game instance
+
+    do game.gameplayRun(); //running the game
+
+    do game.gameTerminate(); //terminating the game when necessary
+
+    return;
+
+  }
+}

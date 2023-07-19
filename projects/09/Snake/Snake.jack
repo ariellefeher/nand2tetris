@@ -1,0 +1,219 @@
+class Snake {
+  static int sideBounds; //holds the max pixel length for the side bounds of an individual block
+  static int maxSnakeLength; // holds the maximum length the snake can be, which is 512 as the length of a row 
+
+  //holds the coordinates of the tail of the snake 
+  field int tailX; 
+  field int tailY; 
+
+  field int snakeLength; // holds the length of the snake during the game
+
+  //holds the direction and coordinates in which to move the snake
+  field int moveX;
+  field int moveY;
+
+  field int direction; // where 0 represents "up", 1 represents "right", 2 represent "down", 3 represents "left"
+
+  // arrays that hold the coordinates of each block of the snake
+  field Array xCoordSnake;
+  field Array yCoordSnake; 
+  
+  //Snake Constructor, done at the beginning of the game
+  constructor Snake init() {
+    let snakeLength = 1; // The snake begins as one block
+
+    let maxSnakeLength = 512; // max length of the snake can be 512, as the length of a row on the screen
+
+    let sideBounds = 16; // side bound for the block of the snake is 16 pixels
+
+    //setting the default direction in which the snake moves to be right
+    let direction = 1;
+
+    //initializing the coordinate arrays
+    let xCoordSnake = Array.new(maxSnakeLength);
+    let yCoordSnake = Array.new(maxSnakeLength); 
+
+
+    //initialzing the snake at (0,0)
+    let xCoordSnake[0] = 0; 
+    let yCoordSnake[0] = 0;
+
+    // initializing the tail to be (0,0) as the snake is one block long 
+    let tailX = 0;
+    let tailY = 0;
+
+    return this;
+  }
+
+  //returns the x coordinate of the start of the snake
+  method int headX() {
+    return xCoordSnake[0];
+  }
+
+  //returns the y coordinate of the start of the snake
+  method int headY() {
+    return yCoordSnake[0];
+  }
+
+
+  //Renders on the screen the movement of the snake on screen
+  method void renderSnake() {
+    
+    //temp variables to signify where to draw the snake on screen
+    var int drawXCoord; 
+    var int drawYCoord;
+
+    var int i; //temp variable to help run the length of the snake 
+
+    let i = 0;
+
+    while (i < snakeLength) {
+      
+      //setting the coordinates of each block in the snake
+      let drawXCoord = xCoordSnake[i] * sideBounds;
+      let drawYCoord = yCoordSnake[i] * sideBounds; 
+
+      //Drawing the each block of the snake as a square that is 16 pixels on each side
+      do Screen.drawRectangle(drawXCoord, drawYCoord, drawXCoord + 15, drawYCoord + 15); 
+
+      let i = i + 1;
+    }
+
+    return;
+  }
+
+  method void moveSnake() {
+   
+    var int key; //numerical representation of the key pressed by the player on the keyboard 
+    
+    var int i;
+
+    let key = Keyboard.keyPressed();
+
+    let i = snakeLength - 1; //starting from the end of the snake
+
+    /** Advancing the Snake One Block Forward  **/
+
+    //setiing the coordinates of the end of the snake
+    let tailX = xCoordSnake[i]; 
+    let tailY = yCoordSnake[i];
+
+    //advancing the snake by letting the previous block advance to the one before it 
+    while (i > 0) {
+      let xCoordSnake[i] = xCoordSnake[i - 1];
+      let yCoordSnake[i] = yCoordSnake[i - 1];
+
+      let i = i - 1;
+    }
+
+    /** Changing the Direction of the Snake  **/
+
+    // 0 - Move the Snake Up
+    if (key = 131 & ~(direction = 2)) {
+      
+      let direction = 0; //setting the direction to up
+
+      //setting how to advance the x and y coordinates  
+      let moveX = 0; 
+      let moveY = -1;
+
+    }
+
+    // 1 - Move the Snake Right
+    if (key = 132 & ~(direction = 3)) { 
+     
+      let direction = 1; //setting the direction to right
+      
+      //setting how to advance the x and y coordinates
+      let moveX = 1; 
+      let moveY = 0;
+    }
+
+    // 2 - Move the Snake Down
+    if (key = 133 & ~(direction = 0)) { 
+     
+      let direction = 2; //setting the direction to down
+
+      //setting how to advance the x and y coordinates
+      let moveX = 0; 
+      let moveY = 1;
+    }
+
+    // 3 - Move the Snake Left
+    if (key = 130 & ~(direction = 1)) { 
+      
+      let direction = 3; //setting the direction to left
+
+      //setting how to advance the x and y coordinates
+      let moveX = -1; 
+      let moveY = 0;
+    }
+
+    /** advancing the head of the snake based on the direction specified **/
+
+    let xCoordSnake[0] = xCoordSnake[0] + moveX;
+    let yCoordSnake[0] = yCoordSnake[0] + moveY;
+
+    return;
+  }
+
+  //Making the Snake grow in size after eating food 
+  method void growinSize() {
+    
+    let snakeLength = snakeLength + 1; //incrementing the snake length
+
+    //advancing the location of the tail to be one longer than before
+    let xCoordSnake[snakeLength - 1] = tailX; 
+    let yCoordSnake[snakeLength - 1] = tailY;
+
+    return;
+  }
+
+  //recognising when the snake dies and the game should be terminated 
+  method boolean ifDied() {
+    
+    /** I - If the Snake Runs into itself the game will terminate**/
+
+    var int i;
+    let i = 1;
+
+    while (i < snakeLength) {
+      
+      //if the coordinate of the head matches a coordinate of another block in the snake
+      if ((xCoordSnake[0] = xCoordSnake[i]) & (yCoordSnake[0] = yCoordSnake[i])) {
+        return true;
+      }
+
+      let i = i + 1;
+    }
+
+    /** II - if the Snake hits the borders of the screen the game will terminate**/
+
+    //If the coordinate is negative
+    if (xCoordSnake[0] < 0) { return true; }
+
+    if (yCoordSnake[0] < 0) { return true; }
+
+    //If the coordinates are beyond the borders
+    if (xCoordSnake[0] > 31) { return true; }
+
+    if (yCoordSnake[0] > 15) { return true; }
+    
+    return false;
+    
+  }
+
+  //Terminating the Game 
+  method void snakeTerminate() {
+   
+    do Memory.deAlloc(this);
+    
+    return;
+  }
+
+  // the score of the game is the length of the snake
+  method int score() {
+    return snakeLength;
+  }
+
+}
